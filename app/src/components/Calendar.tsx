@@ -5,14 +5,10 @@
 import FullCalendar from "@fullcalendar/react"
 import dayGridPlugin from "@fullcalendar/daygrid"
 import jaLocale from "@fullcalendar/core/locales/ja"
+import { Eventprops } from "@/app/page"
 
-export const Calendar = () => {
+export const Calendar = ({ events }: Eventprops)  => {
   // ここの部分にpropsを入れる,titleとstartの中身の部分
-
-  const events = [
-    { title: '出勤', start: new Date(), allday: true,},
-    { title: '退勤', start: new Date(), allday: true},
-  ]
 
   return (
     <FullCalendar
@@ -20,8 +16,8 @@ export const Calendar = () => {
       plugins={[dayGridPlugin]}
       initialView='dayGridMonth'
       firstDay={1}  // 月曜始まり、デフォルトは日曜
-      events={events}
-      displayEventTime={false}   // 時刻表示オフ
+      events={events}   // FullCalendarで用意されている関数
+      displayEventTime={true}   // 時刻表示オフ
 
       // CSS
       // 休みの曜日のマスを青にする
