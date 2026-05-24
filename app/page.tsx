@@ -1,8 +1,9 @@
 'use client'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Calendar } from "./src/components/Calendar";
 import Link from "next/link";
 import { useEventContext } from "./context/EventContext";
+import { EventIndexResponse, CreateEventRequestBody } from "./api/event/route";
 
 export type EventValues = {
   title: string
@@ -21,36 +22,95 @@ export default function Home() {
   const [startTime, setStartTime] = useState('')  // 表示用
   const [outTime, setOutTime] = useState('')
 
-  const handleStartClick = () => {
+  useEffect(() => {
+    const getAllEvents = async () => {
+      const res = await fetch(`/api/event`)
+      const data = await res.json()
+
+      const formatted = data.map((event: EventValues) => ({
+        ...event,
+        start: new Date(event.start)
+      }))
+
+      setEvents(formatted)
+    }
+
+    getAllEvents()
+  },[])
+
+  // handleStartClick と handleOutClickの共通関数
+  const createEvent = async (title: string) => {
     const now = new Date()
+
+    const body: CreateEventRequestBody = {
+      title,
+      start: now,
+    }
+
+    const res = await fetch(`/api/event`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    })
+
+    const data = await res.json()
+
     setEvents((prev) => [
       ...prev,
-      {
-        title: '出勤',
-        start: now,
-      }
+      data
     ])
+
+    return now
+  }
+
+  const handleStartClick = async () => {
+    const now = await createEvent('出勤')
 
     setStartTime(
       now.toLocaleTimeString('ja-JP')
     )
   }
 
-  const handleOutClick = () => {
-    const now = new Date()
-    setEvents((prev) => [
-      ...prev,
-      {
-        title: '退勤',
-        start: now,
-        // allDay: true　　　// 時刻表示なしの場合
-      }
-    ])
+  const handleOutClick = async () => {
+    const now = await createEvent('退勤')
 
     setOutTime(
       now.toLocaleTimeString('ja-JP')
     )
   }
+
+  // const handleStartClick = () => {
+  //   const now = new Date()
+  //   setEvents((prev) => [
+  //     ...prev,    // prevは必ず配列でないといけない、オブジェクトだとエラー
+  //     {
+  //       title: '出勤',
+  //       start: now,
+  //     }
+  //   ])
+
+  //   setStartTime(
+  //     now.toLocaleTimeString('ja-JP')
+  //   )
+  // }
+
+  // const handleOutClick = () => {
+  //   const now = new Date()
+  //   setEvents((prev) => [
+  //     ...prev,
+  //     {
+  //       title: '退勤',
+  //       start: now,
+  //       // allDay: true　　　// 時刻表示なしの場合
+  //     }
+  //   ])
+
+  //   setOutTime(
+  //     now.toLocaleTimeString('ja-JP')
+  //   )
+  // }
 
   return (
     <div>
@@ -89,4 +149,5 @@ export default function Home() {
   );
 }
 
-
+// docker起動
+// docker start postgres
