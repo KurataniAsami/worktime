@@ -142,7 +142,10 @@ export default function Home() {
 
       <Calendar events={events}/>
 
-      <Link href={`/time-list`}>
+      <Link
+        href={`/time-list`}
+        className="bg-gray-300 p-3 text-xl my-3"  
+      >
         勤務時間一覧
       </Link>
     </div>
@@ -151,3 +154,5 @@ export default function Home() {
 
 // docker起動
 // docker start postgres
+
+// 本番環境
