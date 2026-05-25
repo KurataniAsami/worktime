@@ -16,3 +16,5 @@ model EventModel {
   title   String
   start   DateTime
 }
+
+// // "build": "next build",
